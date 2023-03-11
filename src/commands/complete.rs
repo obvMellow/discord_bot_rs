@@ -1,4 +1,4 @@
-use crate::config::config;
+use crate::config;
 use crate::openai::args::CompletionArgs;
 use crate::openai::client::Client;
 use crate::openai::response::Content;
@@ -11,8 +11,8 @@ use serenity::model::prelude::ChannelId;
 
 pub async fn run(channel_id: &ChannelId, options: &[CommandDataOption]) -> String {
     // Check if the command was used in the correct channel
-    if channel_id.as_u64().to_owned() != config::complete_channel_id {
-        return format!("This command can only be used in: <#{}>", config::complete_channel_id)
+    if channel_id.as_u64().to_owned() != config::COMPLETE_CHANNEL_ID {
+        return format!("This command can only be used in: <#{}>", config::COMPLETE_CHANNEL_ID)
     }
 
     let _client = Client::new(

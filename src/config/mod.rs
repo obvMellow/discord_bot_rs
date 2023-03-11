@@ -1,1 +1,2 @@
-pub mod config;
+pub const GUILD_ID: u64 = 1031279445065089084;
+pub const COMPLETE_CHANNEL_ID: u64 = 1078028132872880279;
