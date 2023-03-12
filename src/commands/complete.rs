@@ -28,15 +28,15 @@ pub async fn run(channel_id: &ChannelId, options: &[CommandDataOption]) -> Strin
         .as_ref()
         .expect("Expected a string object");
 
-    let mut prompt = String::new();
+    let mut _prompt = String::new();
 
     if let CommandDataOptionValue::String(new_prompt) = prompt_as_option {
-        prompt = new_prompt.clone();
+        _prompt = new_prompt.clone();
     } else {
         return "Invalid prompt!".to_string();
     }
 
-    let args = CompletionArgs::new(prompt.as_str(), None, None, None, None);
+    let args = CompletionArgs::new(_prompt.as_str(), None, None, None, None);
 
     _client
         .create_completion(&args)
@@ -50,7 +50,7 @@ pub async fn run(channel_id: &ChannelId, options: &[CommandDataOption]) -> Strin
 pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
     command
         .name("complete")
-        .description("Generates an image with given prompt")
+        .description("Completes the given prompt")
         .create_option(|option| {
             option
                 .name("prompt")

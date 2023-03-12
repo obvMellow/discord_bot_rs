@@ -19,7 +19,18 @@ impl EventHandler for Handler {
 
             let content = match command.data.name.as_str() {
                 "test" => commands::test::run(&command.data.options),
-                "complete" => commands::complete::run(&command.channel_id, &command.data.options).await,
+                "complete" => {
+                    commands::complete::run(&command.channel_id, &command.data.options).await
+                }
+                "dall_e" => {
+                    commands::dall_e::run(
+                        &command.channel_id,
+                        &ctx,
+                        &command,
+                        &command.data.options,
+                    )
+                    .await
+                }
                 _ => "not implemented :(".to_string(),
             };
 
@@ -45,6 +56,7 @@ impl EventHandler for Handler {
             commands
                 .create_application_command(|command| commands::test::register(command))
                 .create_application_command(|command| commands::complete::register(command))
+                .create_application_command(|command| commands::dall_e::register(command))
         })
         .await;
 
@@ -57,13 +69,13 @@ impl EventHandler for Handler {
 
 #[tokio::main]
 async fn main() {
-    let _token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
+    let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
 
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::MESSAGE_CONTENT;
 
-    let mut client = Client::builder(&_token, intents)
+    let mut client = Client::builder(&token, intents)
         .event_handler(Handler)
         .await
         .expect("Err creating client");

@@ -65,6 +65,18 @@ pub enum ImageSize {
     Big,
 }
 
+impl std::fmt::Display for ImageSize {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let str = match self {
+            Self::Small => "256x256",
+            Self::Medium => "512x512",
+            Self::Big => "1024x1024"
+        };
+
+        write!(f, "{}", str)
+    }
+}
+
 pub enum ImageResponseFormat {
     Url,
     B64Json,
