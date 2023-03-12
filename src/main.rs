@@ -31,6 +31,9 @@ impl EventHandler for Handler {
                     .await
                 }
                 "edit" => commands::edit::run(&command.channel_id, &command.data.options).await,
+                "purge" => {
+                    commands::purge::run(&ctx, &command.channel_id, &command.data.options).await
+                }
                 _ => "not implemented :(".to_string(),
             };
 
@@ -70,6 +73,12 @@ impl EventHandler for Handler {
 
         Command::create_global_application_command(&ctx.http, |command| {
             commands::test::register(command)
+        })
+        .await
+        .unwrap();
+
+        Command::create_global_application_command(&ctx.http, |command| {
+            commands::purge::register(command)
         })
         .await
         .unwrap();
