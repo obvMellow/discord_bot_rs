@@ -1,11 +1,10 @@
 mod commands;
 mod config;
-mod openai;
 
 use serenity::async_trait;
+use serenity::model::application::command::Command;
 use serenity::model::application::interaction::{Interaction, InteractionResponseType};
 use serenity::model::gateway::Ready;
-use serenity::model::id::GuildId;
 use serenity::prelude::*;
 use std::env;
 
@@ -31,6 +30,7 @@ impl EventHandler for Handler {
                     )
                     .await
                 }
+                "edit" => commands::edit::run(&command.channel_id, &command.data.options).await,
                 _ => "not implemented :(".to_string(),
             };
 
@@ -42,7 +42,7 @@ impl EventHandler for Handler {
                 })
                 .await
             {
-                println!("Cannot respond to slash command: {}", why);
+                eprintln!("Cannot respond to slash command: {}", why);
             }
         }
     }
@@ -50,20 +50,29 @@ impl EventHandler for Handler {
     async fn ready(&self, ctx: Context, ready: Ready) {
         println!("{} is connected!", ready.user.name);
 
-        let guild_id = GuildId(config::GUILD_ID);
-
-        let commands = GuildId::set_application_commands(&guild_id, &ctx.http, |commands| {
-            commands
-                .create_application_command(|command| commands::test::register(command))
-                .create_application_command(|command| commands::complete::register(command))
-                .create_application_command(|command| commands::dall_e::register(command))
+        Command::create_global_application_command(&ctx.http, |command| {
+            commands::complete::register(command)
         })
-        .await;
+        .await
+        .unwrap();
 
-        println!(
-            "I now have the following guild slash commands: {:#?}",
-            commands
-        );
+        Command::create_global_application_command(&ctx.http, |command| {
+            commands::dall_e::register(command)
+        })
+        .await
+        .unwrap();
+
+        Command::create_global_application_command(&ctx.http, |command| {
+            commands::edit::register(command)
+        })
+        .await
+        .unwrap();
+
+        Command::create_global_application_command(&ctx.http, |command| {
+            commands::test::register(command)
+        })
+        .await
+        .unwrap();
     }
 }
 

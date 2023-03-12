@@ -157,6 +157,8 @@ name = "discord_bot_rs"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "openai_gpt_rs",
+ "rand",
  "reqwest",
  "serde",
  "serde_json",
@@ -641,6 +643,19 @@ name = "once_cell"
 version = "1.17.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b7e5500299e16ebb147ae15a00a942af264cf3688f47923b8fc2cd5858f23ad3"
+
+[[package]]
+name = "openai_gpt_rs"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6af2eb82c18524f591738684e72a9200b90d72dda1c59ef8ebe6acd2342f9914"
+dependencies = [
+ "async-trait",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tokio",
+]
 
 [[package]]
 name = "openssl"

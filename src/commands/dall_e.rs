@@ -1,10 +1,11 @@
 use crate::config;
-use crate::openai::response;
-use crate::openai::{
+use openai_gpt_rs::{
     args::{ImageArgs, ImageSize},
     client::Client,
     response::Content,
 };
+use rand::rngs::StdRng;
+use rand::{Rng, SeedableRng};
 use serenity::builder::CreateApplicationCommand;
 use serenity::model::prelude::command::CommandOptionType;
 use serenity::model::prelude::interaction::application_command::{
@@ -12,6 +13,7 @@ use serenity::model::prelude::interaction::application_command::{
 };
 use serenity::model::prelude::ChannelId;
 use serenity::prelude::Context;
+use std::time::SystemTime;
 
 pub async fn run(
     channel_id: &ChannelId,
@@ -33,7 +35,7 @@ pub async fn run(
             .as_str(),
     );
 
-    let _ = application_cmd
+    application_cmd
         .clone()
         .create_interaction_response(ctx.http.clone(), |response| {
             response.interaction_response_data(|data| data.content("Generating image..."))
@@ -56,8 +58,23 @@ pub async fn run(
         return "Invalid prompt!".to_string();
     }
 
-    let _size = options
+    let _amount = options
         .get(1)
+        .expect("Expected an int")
+        .resolved
+        .as_ref()
+        .expect("Expected an int object");
+
+    let amount: usize;
+
+    if let CommandDataOptionValue::Integer(new_amount) = _amount {
+        amount = new_amount.to_owned() as usize;
+    } else {
+        amount = 1;
+    }
+
+    let _size = options
+        .get(2)
         .expect("Expected a size")
         .resolved
         .as_ref()
@@ -69,31 +86,81 @@ pub async fn run(
         size = new_size.to_string();
     }
 
-    let size_as_enum = ImageSize::Big;
+    let size_as_enum = match size.as_str() {
+        "256x256" => ImageSize::Small,
+        "512x512" => ImageSize::Medium,
+        "1024x1024" => ImageSize::Big,
+        _ => ImageSize::Big,
+    };
 
-    if size == "256x256" {
-        let _size_as_enum = ImageSize::Small;
-    } else if size == "512x512" {
-        let _size_as_enum = ImageSize::Medium;
-    } else if size == "1024x1024" {
-        let _size_as_enum = ImageSize::Big;
-    }
+    let args = ImageArgs::new(prompt.as_str(), Some(amount), Some(size_as_enum), None);
 
-    let args = ImageArgs::new(prompt.as_str(), None, Some(size_as_enum), None);
-
-    let content = _client
+    let json = _client
         .create_image(&args)
         .await
         .unwrap()
-        .get_content(0)
+        .get_json()
         .await
         .unwrap();
 
-    let _ = application_cmd
-        .create_followup_message(ctx.http.clone(), |response| {
-            response.content(format!("<@{}> {}", application_cmd.user.tag(), content))
-        })
-        .await;
+    let mut contents: Vec<String> = Vec::new();
+
+    for i in 0..amount {
+        contents.insert(
+            contents.len(),
+            json.as_object()
+                .unwrap()
+                .get("data")
+                .unwrap()
+                .as_array()
+                .unwrap()
+                .get(i)
+                .unwrap()
+                .as_object()
+                .unwrap()
+                .get("url")
+                .unwrap()
+                .as_str()
+                .unwrap()
+                .to_string(),
+        )
+    }
+
+    let mut rng = StdRng::seed_from_u64(
+        SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos() as u64,
+    );
+
+    let random_number = rng.gen::<u32>();
+
+    let thread = application_cmd
+        .channel_id
+        .create_public_thread(
+            ctx.http.clone(),
+            application_cmd
+                .channel_id
+                .messages(ctx.http.clone(), |builder| builder.limit(2))
+                .await
+                .unwrap()
+                .first()
+                .unwrap()
+                .id,
+            |f| {
+                f.auto_archive_duration(1440)
+                    .name(format!("img-{}", random_number))
+            },
+        )
+        .await
+        .unwrap();
+
+    for content in contents {
+        thread
+            .send_message(ctx.http.clone(), |f| f.content(content))
+            .await
+            .unwrap();
+    }
 
     "".to_string()
 }
@@ -108,6 +175,15 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
                 .description("The prompt to be completed.")
                 .kind(CommandOptionType::String)
                 .required(true)
+        })
+        .create_option(|option| {
+            option
+                .name("amount")
+                .description("Amount of images to be generated.")
+                .kind(CommandOptionType::Integer)
+                .required(true)
+                .min_int_value(1)
+                .max_int_value(10)
         })
         .create_option(|option| {
             option

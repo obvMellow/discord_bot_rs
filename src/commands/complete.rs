@@ -1,7 +1,7 @@
 use crate::config;
-use crate::openai::args::CompletionArgs;
-use crate::openai::client::Client;
-use crate::openai::response::Content;
+use openai_gpt_rs::args::CompletionArgs;
+use openai_gpt_rs::client::Client;
+use openai_gpt_rs::response::Content;
 use serenity::builder::CreateApplicationCommand;
 use serenity::model::prelude::command::CommandOptionType;
 use serenity::model::prelude::interaction::application_command::{
