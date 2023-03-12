@@ -16,37 +16,37 @@ pub async fn run(channel_id: &ChannelId, options: &[CommandDataOption]) -> Strin
         );
     }
 
-    let _prompt = options
+    let _prompt_old = options
         .get(0)
         .expect("Expected a string")
         .resolved
         .as_ref()
         .expect("Expected a string object");
 
-    let mut prompt = String::new();
+    let mut _prompt = String::new();
 
-    if let CommandDataOptionValue::String(new_prompt) = _prompt {
-        prompt = new_prompt.clone();
+    if let CommandDataOptionValue::String(new_prompt) = _prompt_old {
+        _prompt = new_prompt.clone();
     } else {
         return "Invalid prompt!".to_string();
     }
 
-    let _instruct = options
+    let _instruct_old = options
         .get(1)
         .expect("Expected a string")
         .resolved
         .as_ref()
         .expect("Expected a string object");
 
-    let mut instruct = String::new();
+    let mut _instruct = String::new();
 
-    if let CommandDataOptionValue::String(new_instruct) = _instruct {
-        instruct = new_instruct.clone();
+    if let CommandDataOptionValue::String(new_instruct) = _instruct_old {
+        _instruct = new_instruct.clone();
     } else {
         return "Invalid prompt!".to_string();
     }
 
-    let args = EditArgs::new(None, &instruct, &prompt, None, None, None);
+    let args = EditArgs::new(None, &_instruct, &_prompt, None, None, None);
 
     let _client = Client::new(
         std::env::var("OPENAI_KEY")

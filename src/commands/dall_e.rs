@@ -43,17 +43,17 @@ pub async fn run(
         .await
         .unwrap();
 
-    let _prompt = options
+    let _prompt_old = options
         .get(0)
         .expect("Expected a string")
         .resolved
         .as_ref()
         .expect("Expected a string object");
 
-    let mut prompt = String::new();
+    let mut _prompt = String::new();
 
-    if let CommandDataOptionValue::String(new_prompt) = _prompt {
-        prompt = new_prompt.clone();
+    if let CommandDataOptionValue::String(new_prompt) = _prompt_old {
+        _prompt = new_prompt.clone();
     } else {
         return "Invalid prompt!".to_string();
     }
@@ -93,7 +93,7 @@ pub async fn run(
         _ => ImageSize::Big,
     };
 
-    let args = ImageArgs::new(prompt.as_str(), Some(amount), Some(size_as_enum), None);
+    let args = ImageArgs::new(_prompt.as_str(), Some(amount), Some(size_as_enum), None);
 
     let json = _client
         .create_image(&args)
