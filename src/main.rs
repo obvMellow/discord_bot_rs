@@ -1,6 +1,7 @@
 mod commands;
 mod config;
 
+use colored::Colorize;
 use serenity::async_trait;
 use serenity::model::application::command::Command;
 use serenity::model::application::interaction::{Interaction, InteractionResponseType};
@@ -68,13 +69,21 @@ impl EventHandler for Handler {
                 })
                 .await
             {
-                eprintln!("Cannot respond to slash command: {}", why);
+                eprintln!(
+                    "{} Cannot respond to slash command: {}",
+                    "Error".red().bold(),
+                    why
+                );
             }
         }
     }
 
     async fn ready(&self, ctx: Context, ready: Ready) {
-        println!("{} is connected!", ready.user.name);
+        println!(
+            "\n{} connected as {}.",
+            "   Ready".green().bold(),
+            ready.user.name
+        );
 
         Command::create_global_application_command(&ctx.http, |command| {
             commands::complete::register(command)
@@ -145,6 +154,6 @@ async fn main() {
         .expect("Err creating client");
 
     if let Err(why) = client.start().await {
-        println!("Client error: {:?}", why);
+        eprintln!("{} Client error: {:?}", "Error".red().bold(), why);
     }
 }

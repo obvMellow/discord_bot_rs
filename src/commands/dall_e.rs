@@ -190,7 +190,7 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
                 .name("size")
                 .description("Size of the generated image.")
                 .kind(CommandOptionType::String)
-                .required(false)
+                .required(true)
                 .add_string_choice("Small", ImageSize::Small)
                 .add_string_choice("Medium", ImageSize::Medium)
                 .add_string_choice("Big", ImageSize::Big)
