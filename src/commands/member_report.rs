@@ -11,11 +11,19 @@ pub async fn run(
     name_prefix: &str,
     allowed_channel_id: u64,
 ) -> String {
-    crate::commands::bug_report::run(&channel_id, &ctx, &application_cmd, &name_prefix, allowed_channel_id).await
+    crate::commands::bug_report::run(
+        &channel_id,
+        &ctx,
+        &application_cmd,
+        &name_prefix,
+        allowed_channel_id,
+    )
+    .await
 }
 
 pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
     command
         .name("report_member")
-        .description("creates a private channel for you to report a member.")
+        .description("Creates a private channel for you to report a member.")
+        .dm_permission(false)
 }

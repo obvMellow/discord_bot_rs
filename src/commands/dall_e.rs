@@ -195,4 +195,5 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
                 .add_string_choice("Medium", ImageSize::Medium)
                 .add_string_choice("Big", ImageSize::Big)
         })
+        .dm_permission(false)
 }

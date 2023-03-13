@@ -47,4 +47,5 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
                 .kind(CommandOptionType::Integer)
                 .required(true)
         })
+        .dm_permission(false)
 }

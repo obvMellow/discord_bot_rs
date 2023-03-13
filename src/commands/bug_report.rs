@@ -16,10 +16,10 @@ pub async fn run(
     ctx: &Context,
     application_cmd: &ApplicationCommandInteraction,
     name_prefix: &str,
-    allowed_channel_id: u64
+    allowed_channel_id: u64,
 ) -> String {
     // Check if the command was used in the correct channel
-    if channel_id.as_u64().to_owned() != allowed_channel_id{
+    if channel_id.as_u64().to_owned() != allowed_channel_id {
         return format!(
             "This command can only be used in: <#{}>",
             allowed_channel_id
@@ -81,5 +81,6 @@ pub async fn run(
 pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
     command
         .name("report_bug")
-        .description("creates a private channel for you to report a bug.")
+        .description("Creates a private channel for you to report a bug.")
+        .dm_permission(false)
 }

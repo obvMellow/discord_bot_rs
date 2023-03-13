@@ -54,6 +54,7 @@ impl EventHandler for Handler {
                     )
                     .await
                 }
+                "confess" => commands::confess::run(&ctx, &command, &command.data.options).await,
                 _ => "not implemented :(".to_string(),
             };
 
@@ -111,6 +112,12 @@ impl EventHandler for Handler {
 
         Command::create_global_application_command(&ctx.http, |command| {
             commands::member_report::register(command)
+        })
+        .await
+        .unwrap();
+
+        Command::create_global_application_command(&ctx.http, |command| {
+            commands::confess::register(command)
         })
         .await
         .unwrap();
