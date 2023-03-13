@@ -5,6 +5,8 @@ use serenity::async_trait;
 use serenity::model::application::command::Command;
 use serenity::model::application::interaction::{Interaction, InteractionResponseType};
 use serenity::model::gateway::Ready;
+use serenity::model::prelude::Activity;
+use serenity::model::user::OnlineStatus;
 use serenity::prelude::*;
 use std::env;
 
@@ -121,6 +123,11 @@ impl EventHandler for Handler {
         })
         .await
         .unwrap();
+
+        // Set the activity
+        let activity = Activity::playing("with your mom");
+
+        ctx.set_presence(Some(activity), OnlineStatus::Online).await;
     }
 }
 
