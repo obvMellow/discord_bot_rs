@@ -1,5 +1,5 @@
 use serenity::builder::CreateApplicationCommand;
-use serenity::model::prelude::command::{CommandOptionType, CommandType};
+use serenity::model::prelude::command::CommandOptionType;
 use serenity::model::prelude::interaction::application_command::{
     ApplicationCommandInteraction, CommandDataOption, CommandDataOptionValue,
 };
