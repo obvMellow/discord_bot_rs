@@ -70,8 +70,8 @@ impl EventHandler for Handler {
                 .await
             {
                 eprintln!(
-                    "{} Cannot respond to slash command: {}",
-                    "Error".red().bold(),
+                    "{} cannot respond to slash command: {}",
+                    "   Error".red().bold(),
                     why
                 );
             }
