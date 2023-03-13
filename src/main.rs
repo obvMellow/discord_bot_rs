@@ -34,6 +34,26 @@ impl EventHandler for Handler {
                 "purge" => {
                     commands::purge::run(&ctx, &command.channel_id, &command.data.options).await
                 }
+                "report_bug" => {
+                    commands::bug_report::run(
+                        &command.channel_id,
+                        &ctx,
+                        &command,
+                        "bug-report",
+                        config::BUG_REPORT_CHANNEL_ID,
+                    )
+                    .await
+                }
+                "report_member" => {
+                    commands::member_report::run(
+                        &command.channel_id,
+                        &ctx,
+                        &command,
+                        "member-report",
+                        config::MEMBER_REPORT_CHANNEL_ID,
+                    )
+                    .await
+                }
                 _ => "not implemented :(".to_string(),
             };
 
@@ -79,6 +99,18 @@ impl EventHandler for Handler {
 
         Command::create_global_application_command(&ctx.http, |command| {
             commands::purge::register(command)
+        })
+        .await
+        .unwrap();
+
+        Command::create_global_application_command(&ctx.http, |command| {
+            commands::bug_report::register(command)
+        })
+        .await
+        .unwrap();
+
+        Command::create_global_application_command(&ctx.http, |command| {
+            commands::member_report::register(command)
         })
         .await
         .unwrap();

@@ -25,7 +25,7 @@ pub async fn run(
     if channel_id.as_u64().to_owned() != config::DALL_E_CHANNEL_ID {
         return format!(
             "This command can only be used in: <#{}>",
-            config::COMPLETE_CHANNEL_ID
+            config::DALL_E_CHANNEL_ID
         );
     }
 
