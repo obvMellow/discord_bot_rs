@@ -22,7 +22,13 @@ impl EventHandler for Handler {
             let content = match command.data.name.as_str() {
                 "test" => commands::test::run(&command.data.options),
                 "complete" => {
-                    commands::complete::run(&command.channel_id, &command.data.options).await
+                    commands::complete::run(
+                        &ctx,
+                        &command,
+                        &command.channel_id,
+                        &command.data.options,
+                    )
+                    .await
                 }
                 "dall_e" => {
                     commands::dall_e::run(
