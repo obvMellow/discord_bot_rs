@@ -6,3 +6,4 @@ pub mod purge;
 pub mod bug_report;
 pub mod member_report;
 pub mod confess;
+pub mod chat;

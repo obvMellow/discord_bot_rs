@@ -101,7 +101,7 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
                 .description("Max amount of tokens (one token is about a word or punctuation) the completion can contain.")
                 .kind(CommandOptionType::Integer)
                 .min_int_value(1)
-                .max_int_value(2048)
+                .max_int_value(4096)
                 .required(false)
         })
         .dm_permission(false)
