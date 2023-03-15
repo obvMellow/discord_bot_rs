@@ -3,6 +3,7 @@ mod config;
 
 use colored::Colorize;
 use config::Token;
+use openai_gpt_rs::client::Client as AIClient;
 use serenity::async_trait;
 use serenity::model::application::command::Command;
 use serenity::model::application::interaction::{Interaction, InteractionResponseType};
@@ -148,10 +149,17 @@ impl EventHandler for Handler {
 
 #[tokio::main]
 async fn main() {
-    let token = config::load("./config.json")
-        .expect("No config.json file found!")
+    let config = config::load("./config.json").expect("No config.json file found!");
+
+    let token = config
         .discord_token()
-        .expect("No Discord token found in the config.json file!");
+        .expect("No Discord token found in config.json!");
+
+    let _client = AIClient::new(
+        &config
+            .openai_key()
+            .expect("No OpenAI key found in config.json!"),
+    );
 
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
