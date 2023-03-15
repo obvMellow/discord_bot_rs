@@ -1,4 +1,5 @@
 use crate::config;
+use config::Token;
 use openai_gpt_rs::args::CompletionArgs;
 use openai_gpt_rs::client::Client;
 use openai_gpt_rs::response::Content;
@@ -25,8 +26,10 @@ pub async fn run(
     }
 
     let _client = Client::new(
-        std::env::var("OPENAI_KEY")
-            .expect("Expected a OpenAI Key in the environment")
+        config::load("./config.json")
+            .expect("No config.json file found!")
+            .openai_key()
+            .expect("No OpenAI key found in the config.json file!")
             .as_str(),
     );
 

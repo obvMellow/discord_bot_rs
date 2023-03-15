@@ -10,6 +10,7 @@ pub const MOD_ROLE_ID: u64 = 1077335879540027455;
 pub const MEMBER_REPORT_CHANNEL_ID: u64 = 1078374161765912727;
 pub const CONFESSION_CHANNEL_ID: u64 = 1078745380818276432;
 
+#[derive(Debug)]
 pub struct Error {
     pub io: Option<std::io::Error>,
     pub json: Option<serde_json::Error>,

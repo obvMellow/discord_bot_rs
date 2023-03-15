@@ -1,4 +1,5 @@
 use crate::config;
+use config::Token;
 use openai_gpt_rs::{args::EditArgs, client::Client, response::Content};
 use serenity::builder::CreateApplicationCommand;
 use serenity::model::prelude::command::CommandOptionType;
@@ -49,8 +50,10 @@ pub async fn run(channel_id: &ChannelId, options: &[CommandDataOption]) -> Strin
     let args = EditArgs::new(None, &_instruct, &_prompt, None, None, None);
 
     let _client = Client::new(
-        std::env::var("OPENAI_KEY")
-            .expect("Expected a OpenAI Key in the environment")
+        config::load("./config.json")
+            .expect("No config.json file found!")
+            .openai_key()
+            .expect("No OpenAI key found in the config.json file!")
             .as_str(),
     );
 

@@ -2,6 +2,7 @@ mod commands;
 mod config;
 
 use colored::Colorize;
+use config::Token;
 use serenity::async_trait;
 use serenity::model::application::command::Command;
 use serenity::model::application::interaction::{Interaction, InteractionResponseType};
@@ -9,7 +10,6 @@ use serenity::model::gateway::Ready;
 use serenity::model::prelude::Activity;
 use serenity::model::user::OnlineStatus;
 use serenity::prelude::*;
-use std::env;
 
 struct Handler;
 
@@ -148,7 +148,10 @@ impl EventHandler for Handler {
 
 #[tokio::main]
 async fn main() {
-    let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
+    let token = config::load("./config.json")
+        .expect("No config.json file found!")
+        .discord_token()
+        .expect("No Discord token found in the config.json file!");
 
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
