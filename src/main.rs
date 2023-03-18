@@ -1,14 +1,16 @@
 mod commands;
 mod config;
+mod logger;
 
 use colored::Colorize;
 use config::Token;
+use logger::Logger;
 use openai_gpt_rs::client::Client as AIClient;
 use serenity::async_trait;
 use serenity::model::application::command::Command;
 use serenity::model::application::interaction::{Interaction, InteractionResponseType};
 use serenity::model::gateway::Ready;
-use serenity::model::prelude::Activity;
+use serenity::model::prelude::{Activity, ChannelId, Message};
 use serenity::model::user::OnlineStatus;
 use serenity::prelude::*;
 
@@ -154,6 +156,22 @@ impl EventHandler for Handler {
         let activity = Activity::playing("with your mom");
 
         ctx.set_presence(Some(activity), OnlineStatus::Online).await;
+    }
+
+    async fn message(&self, ctx: Context, msg: Message) {
+        let log_channel = ChannelId::from(config::LOG_CHANNEL_ID);
+        let logger = Logger::new(log_channel, "log");
+
+        match logger.message_sent(msg, &ctx).await {
+            Ok(_) => (),
+            Err(e) => {
+                log_channel
+                    .say(ctx.http, format!("An error occured while logging: {:?}", e))
+                    .await
+                    .unwrap();
+                ()
+            }
+        };
     }
 }
 
