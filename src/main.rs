@@ -92,12 +92,6 @@ impl EventHandler for Handler {
     }
 
     async fn ready(&self, ctx: Context, ready: Ready) {
-        println!(
-            "\n{} connected as {}.",
-            "   Ready".green().bold(),
-            ready.user.name
-        );
-
         Command::create_global_application_command(&ctx.http, |command| {
             commands::complete::register(command)
         })
@@ -156,9 +150,19 @@ impl EventHandler for Handler {
         let activity = Activity::playing("with your mom");
 
         ctx.set_presence(Some(activity), OnlineStatus::Online).await;
+
+        println!(
+            "\n{} connected as {}.\n",
+            "   Ready".green().bold(),
+            ready.user.name
+        );
     }
 
     async fn message(&self, ctx: Context, msg: Message) {
+        if msg.author.id == ctx.http.get_current_user().await.unwrap().id {
+            return;
+        }
+
         let log_channel = ChannelId::from(config::LOG_CHANNEL_ID);
         let logger = Logger::new(log_channel, "log");
 
@@ -169,6 +173,8 @@ impl EventHandler for Handler {
                     .say(ctx.http, format!("An error occured while logging: {:?}", e))
                     .await
                     .unwrap();
+
+                println!("An error occured while logging: {:?}", e);
                 ()
             }
         };
