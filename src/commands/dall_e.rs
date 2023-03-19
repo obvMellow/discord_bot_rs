@@ -46,6 +46,8 @@ pub async fn run(
         .await
         .unwrap();
 
+    let typing = channel_id.start_typing(&ctx.http).unwrap();
+
     let _prompt_old = options
         .get(0)
         .expect("Expected a string")
@@ -164,6 +166,8 @@ pub async fn run(
             .await
             .unwrap();
     }
+
+    typing.stop().unwrap();
 
     "".to_string()
 }
